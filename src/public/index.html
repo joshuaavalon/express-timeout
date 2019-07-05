@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html class="no-js" lang="">
+  <head>
+    <meta charset="utf-8" />
+    <title>Test Browser Timeout</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>
+      function getTimeout() {
+        return document.getElementById("timeout").value;
+      }
+
+      async function onFetch() {
+        const timeout = getTimeout();
+        try {
+          const res = await fetch("/api", {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ timeout })
+          });
+          const text = await res.text();
+          alert(text);
+        } catch (e) {
+          alert(e);
+        }
+      }
+
+      function onAjax() {
+        const timeout = getTimeout();
+        const req = new XMLHttpRequest();
+        req.timeout = 600 * 1000;
+        req.open("POST", "/api");
+        req.setRequestHeader("Accept", "application/json");
+        req.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        req.onreadystatechange = function() {
+          if (req.readyState == 4 && req.status == 200) {
+            alert(req.responseText);
+          }
+        };
+        req.ontimeout = function() {
+          alert("timeout");
+        };
+        req.send(JSON.stringify({ timeout }));
+      }
+    </script>
+  </head>
+
+  <body>
+    <p>Hello world! This is HTML5 Boilerplate.</p>
+    <input placeholder="second" id="timeout" type="number" />
+    <button onclick="onFetch()">Fetch</button>
+    <button onclick="onAjax()">AJAX</button>
+  </body>
+</html>
